@@ -12,8 +12,13 @@ Route::get('/', function () {
 });
 Route::get('/posts', function () {
     // $posts = Post::with(['author', 'category'])->latest()->get(); //eager loading with author and category (on post model)
-    $posts = Post::latest()->get();
-    return view('posts', ['title' => 'Blog', 'posts' => $posts]);
+    $posts = Post::latest();
+
+    if (request('search')) {
+        $posts->where('title', 'like', '%' . request('search') . '%'); //performed search refer to keyword in search box
+    }
+
+    return view('posts', ['title' => 'Blog', 'posts' => $posts->get()]);
 });
 
 Route::get('/posts/{post:slug}', function (Post $post) {
